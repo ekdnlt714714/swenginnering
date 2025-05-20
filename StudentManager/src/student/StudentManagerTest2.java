@@ -21,4 +21,23 @@ class StudentManagerTest2 {
        
        System.out.println("이강유");
    }
+<<<<<<< Upstream, based on origin/master
+=======
+
+   @Test
+   void testAddStudentDuplicate() {
+       studentManager.addStudent("의찬박");
+       assertThrows(IllegalArgumentException.class, () -> {
+           studentManager.addStudent("의찬박");
+       }, "예외 발생");
+   }
+
+   @Test
+   void testRemoveNonExistentStudent() {
+       assertThrows(IllegalArgumentException.class, () -> {
+           studentManager.removeStudent("박박");
+       }, "예외 발생");
+   }
+   //song commit test
+>>>>>>> 411c3b1 commit test
 }
