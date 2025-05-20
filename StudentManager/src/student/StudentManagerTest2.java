@@ -40,6 +40,5 @@ class StudentManagerTest {
            studentManager.removeStudent("박박");
        }, "예외 발생");
    }
-
-
+//brach commit test, shkch
 }
