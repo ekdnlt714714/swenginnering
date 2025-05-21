@@ -1,0 +1,133 @@
+// Jenkinsfile (Declarative Pipeline)
+
+pipeline {
+    agent any // Specifies that Jenkins can use any available agent to run the pipeline
+
+    tools {
+        // If you have specific JDK or Maven versions configured in Jenkins Global Tool Configuration,
+        // you can specify them here. Otherwise, ensure Maven and JDK are in the PATH of the agent.
+        // Example:
+        // jdk 'jdk11' // Name of your JDK configuration in Jenkins
+        // maven 'maven3' // Name of your Maven configuration in Jenkins
+    }
+
+    environment {
+        // Define any environment variables needed for your build
+        // EXAMPLE_VAR = 'some_value'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the source code from your Git repository
+                // Jenkins automatically checks out the branch that triggered the pipeline
+                // For more control, you can use the 'git' step explicitly:
+                // git url: 'https_or_ssh_link_to_your_repo.git', branch: 'master' // or 'main'
+                checkout scm
+                echo "Code checked out successfully."
+            }
+        }
+
+        stage('Build') {
+            steps {
+                // Clean and compile the project using Maven
+                // 'sh' for Linux/macOS agents, 'bat' for Windows agents
+                script {
+                    if (isUnix()) {
+                        sh 'mvn clean compile'
+                    } else {
+                        bat 'mvnw.cmd clean compile' // Use mvnw.cmd if you have Maven wrapper
+                        // or bat 'mvn clean compile' // If mvn is in PATH
+                    }
+                }
+                echo "Project compiled successfully."
+            }
+        }
+
+        stage('Test') {
+            steps {
+                // Run all tests using Maven
+                // Maven will automatically find and execute test classes in src/test/java
+                // that follow naming conventions like *Test.java, *Tests.java, *TestCase.java
+                script {
+                    if (isUnix()) {
+                        sh 'mvn test'
+                    } else {
+                        bat 'mvnw.cmd test'
+                        // or bat 'mvn test'
+                    }
+                }
+                echo "Tests executed."
+            }
+            post {
+                // This block runs after the 'Test' stage's steps, regardless of success or failure
+                always {
+                    // Archive JUnit test results.
+                    // Maven Surefire plugin (default for tests) generates XML reports in target/surefire-reports
+                    junit 'target/surefire-reports/*.xml'
+                    echo "Test reports archived."
+                }
+                success {
+                    echo "All tests passed!"
+                }
+                failure {
+                    echo "Some tests failed. Check the test reports."
+                }
+            }
+        }
+
+        // Optional: Stage to archive build artifacts (e.g., JAR/WAR files)
+        /*
+        stage('Archive Artifacts') {
+            steps {
+                // Example: Archive a JAR file if your pom.xml is configured to build one
+                // archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                echo "Build artifacts archived (if any configured)."
+            }
+        }
+        */
+
+        // Optional: Further stages like SonarQube analysis, Deploy, etc.
+        /*
+        stage('Static Analysis') {
+            steps {
+                echo "Running static analysis (e.g., SonarQube)..."
+                // Add SonarQube steps here if configured
+            }
+        }
+
+        stage('Deploy') {
+            when {
+                // Only deploy if building the main/master branch and tests passed
+                branch 'main' // or 'master'
+                // expression { currentBuild.result == 'SUCCESS' } // Handled by pipeline flow
+            }
+            steps {
+                echo "Deploying application..."
+                // Add your deployment steps here
+            }
+        }
+        */
+    }
+
+    post {
+        // This block runs after all stages have completed
+        always {
+            echo "Pipeline finished."
+            // Clean up workspace if needed
+            // cleanWs()
+        }
+        success {
+            echo "Pipeline completed successfully!"
+            // Send success notifications (e.g., email, Slack)
+        }
+        failure {
+            echo "Pipeline failed."
+            // Send failure notifications
+        }
+        unstable {
+            echo "Pipeline is unstable (e.g., tests failed but build didn't break)."
+            // Send unstable notifications
+        }
+    }
+}
