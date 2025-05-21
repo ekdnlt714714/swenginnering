@@ -21,7 +21,7 @@ public class StudentManager {
         }
         students.remove(name);
     }
-    //학생 조회(boolean타입 반환)
+    //학생 조회
     public boolean hasStudent(String name) {
         return students.contains(name);
     }

@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class StudentManagerTest2 {
+class StudentManagerTest1 {
    private StudentManager studentManager;
    
    @BeforeEach
@@ -14,11 +14,9 @@ class StudentManagerTest2 {
    }
 
    @Test
-   void testRemoveStudent() {
-       studentManager.addStudent("의찬");
-       studentManager.removeStudent("의찬");
-       assertFalse(studentManager.hasStudent("의찬"), "학생 제거");
-       
-       System.out.println("이강유");
+   void testAddStudent() {
+      studentManager.addStudent("박의찬");
+      assertTrue(studentManager.hasStudent("박의찬"), "학생 추가");
+      System.out.println("박의찬: 2025/05/21/13:53");
    }
 }
