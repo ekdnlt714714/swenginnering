@@ -148,14 +148,14 @@ pipeline {
                 // Assumes Email Extension Plugin is installed.
                 try {
                     emailext (
-                    subject: "Pipeline Test - SUCCESS: Jenkins Build #${env.BUILD_NUMBER} for ${env.JOB_NAME}",
+                    subject: "Pipeline Test - SUCCESS: Jenkins Build",
                     body: "This is a simple test email from the Jenkins pipeline. Build was successful.",
                     to: 'ekdnlt714714@naver.com', // Test with just ONE address first
                     mimeType: 'text/plain' // Send as plain text
                 )
-                    echo "[i] Attempted to send simplified success email."
+                    echo "Attempted to send simplified success email."
                 } catch (e) {
-                    echo "[w] Failed to send simplified success email. Error: ${e.getMessage()}"
+                    echo "Failed to send simplified success email. Error: ${e.getMessage()}"
                 }
             }
         }
@@ -165,11 +165,8 @@ pipeline {
             script {
                 try {
                     emailext (
-                        subject: "UNSTABLE: Jenkins Build #${env.BUILD_NUMBER} for ${env.JOB_NAME} (Test Failures?)",
-                        body: """<p>Build is UNSTABLE for project <b>${env.JOB_NAME}</b>, build number <b>#${env.BUILD_NUMBER}</b>. This often indicates test failures.</p>
-                               <p>Please review the test results: <a href="${env.BUILD_URL}testReport">${env.BUILD_URL}testReport</a></p>
-                               <p>Full build log: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-                               <p>Summary file: ${env.BUILD_SUMMARY_FILE}</p>""",
+                        subject: "UNSTABLE: Jenkins Build",
+                        body: """<p>Build is UNSTABLE for project <b>${env.JOB_NAME}</b>, build number <b>#${env.BUILD_NUMBER}</b>.""",
                         to: 'ekdnlt714714@gmail.com, cba7215@g.hongik.ac.kr, songbaro@g.hongik.ac.kr, leek0729@naver.com', // <<< --- !!! CHANGE THIS EMAIL ADDRESS !!!
                         mimeType: 'text/html'
                     )
@@ -184,10 +181,8 @@ pipeline {
             script {
                 try {
                     emailext (
-                        subject: "FAILURE: Jenkins Build #${env.BUILD_NUMBER} for ${env.JOB_NAME}",
-                        body: """<p>Build FAILED for project <b>${env.JOB_NAME}</b>, build number <b>#${env.BUILD_NUMBER}</b>.</p>
-                               <p>Please check the console output immediately for failure reasons: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-                               <p>Summary file (if generated before failure): ${env.BUILD_SUMMARY_FILE}</p>""",
+                        subject: "FAILURE: Jenkins Build",
+                        body: """<p>Build FAILED for project <b>${env.JOB_NAME}</b>, build number <b>#${env.BUILD_NUMBER}</b>.""",
                         to: 'ekdnlt714714@gmail.com, cba7215@g.hongik.ac.kr, songbaro@g.hongik.ac.kr, leek0729@naver.com', // <<< --- !!! CHANGE THIS EMAIL ADDRESS !!!
                         mimeType: 'text/html'
                     )
