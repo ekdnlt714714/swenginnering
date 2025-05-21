@@ -19,5 +19,6 @@ class StudentManagerTest2 {
        studentManager.removeStudent("의찬");
        assertFalse(studentManager.hasStudent("의찬"), "학생 제거");
        
+       System.out.println("이강유");
    }
 }
