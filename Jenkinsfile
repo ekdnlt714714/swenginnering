@@ -148,16 +148,14 @@ pipeline {
                 // Assumes Email Extension Plugin is installed.
                 try {
                     emailext (
-                        subject: "SUCCESS: Jenkins Build #${env.BUILD_NUMBER} for ${env.JOB_NAME}",
-                        body: """<p>Build SUCCEEDED for project <b>${env.JOB_NAME}</b>, build number <b>#${env.BUILD_NUMBER}</b>.</p>
-                               <p>Access the build at: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-                               <p>Build summary and test reports are available as archived artifacts.</p>
-                               <p>Summary file: ${env.BUILD_SUMMARY_FILE}</p>""",
-                        to: 'ekdnlt714714@gmail.com, cba7215@g.hongik.ac.kr, songbaro@g.hongik.ac.kr, leek0729@naver.com', // <<< --- !!! CHANGE THIS EMAIL ADDRESS !!!
-                        mimeType: 'text/html'
-                    )
+                    subject: "Pipeline Test - SUCCESS: Jenkins Build #${env.BUILD_NUMBER} for ${env.JOB_NAME}",
+                    body: "This is a simple test email from the Jenkins pipeline. Build was successful.",
+                    to: 'ekdnlt714714@gmail.com', // Test with just ONE address first
+                    mimeType: 'text/plain' // Send as plain text
+                )
+                    echo "[i] Attempted to send simplified success email."
                 } catch (e) {
-                    echo "[w] Failed to send success email. Email Extension Plugin configured correctly? Error: ${e.getMessage()}"
+                    echo "[w] Failed to send simplified success email. Error: ${e.getMessage()}"
                 }
             }
         }
