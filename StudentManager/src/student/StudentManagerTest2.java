@@ -40,5 +40,11 @@ class StudentManagerTest {
            studentManager.removeStudent("박박");
        }, "예외 발생");
    }
+   
+   @Test
+   void testGitCommitShkch() {
+	   studentManager.addStudent("신경철");
+	   assertTrue(studentManager.hasStudent("신경철"));	   
+   }
 //brach commit test, shkch
 }
