@@ -139,6 +139,4 @@ pipeline {
         }
         // ... success, unstable, failure blocks ...
     }
-    
-    
-}
+
