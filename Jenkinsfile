@@ -1,78 +1,3 @@
-<<<<<<< HEAD
-pipeline {
-    agent any
-
-    environment {
-        JUNIT_JAR_URL = 'https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.7.1/junit-platform-console-standalone-1.7.1.jar'
-        JUNIT_JAR_PATH = 'lib/junit.jar'
-        CLASS_DIR = 'classes'
-        REPORT_DIR = 'test-reports'
-    }
-
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
-        stage('Prepare') {
-            steps {
-                sh '''
-                    mkdir -p ${CLASS_DIR}
-                    mkdir -p ${REPORT_DIR}
-                    mkdir -p lib
-                    echo "[+] Downloading JUnit JAR..."
-                    curl -L -o ${JUNIT_JAR_PATH} ${JUNIT_JAR_URL}
-                '''
-            }
-        }
-
-        stage('Build') {
-            steps {
-                sh '''
-                    echo "[+] Compiling source files..."
-                    cd Test2
-                    find src -name "*.java" > sources.txt
-                    javac -encoding UTF-8 -d ../${CLASS_DIR} -cp ../${JUNIT_JAR_PATH} @sources.txt
-                '''
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh '''
-                    echo "[+] Running tests with JUnit..."
-                    java -jar ${JUNIT_JAR_PATH} \
-                         --class-path ${CLASS_DIR} \
-                         --scan-class-path \
-                         --details=tree \
-                         --details-theme=ascii \
-                         --reports-dir ${REPORT_DIR} \
-                         --config=junit.platform.output.capture.stdout=true \
-                         --config=junit.platform.reporting.open.xml.enabled=true \
-                         > ${REPORT_DIR}/test-output.txt
-                '''
-            }
-        }
-    }
-
-    post {
-        always {
-            echo "[*] Archiving test results..."
-            junit "${REPORT_DIR}/**/*.xml"
-            archiveArtifacts artifacts: "${REPORT_DIR}/**/*", allowEmptyArchive: true
-        }
-
-        failure {
-            echo "Build or test failed!"
-        }
-
-        success {
-            echo "Build and test succeeded!"
-=======
-// Jenkinsfile (Declarative Pipeline)
-
 pipeline {
     agent any 
 
@@ -185,15 +110,9 @@ pipeline {
             }
         }
     }
-
     post {
         always {
-            echo "[*] Archiving test reports and build summary..."
-            junit testResults: "${REPORT_DIR}/TEST-*.xml", 
-                   allowEmptyResults: true,          
-                   healthScaleFactor: 1.0            
-
-            archiveArtifacts artifacts: "${REPORT_DIR}/**/*", allowEmptyArchive: true
+            // ... other archiving ...
             
             script {
                 // Using env.GIT_COMMIT as a workaround for scm.GIT_COMMIT script security
@@ -205,74 +124,21 @@ pipeline {
                 Build Number: ${env.BUILD_NUMBER}
                 Build URL: ${env.BUILD_URL}
                 Git Commit: ${gitCommit}
-                Build Status: ${currentBuild.currentResult ?: 'IN PROGRESS'}
+                Build Status: ${currentBuild.currentResult ?: 'IN PROGRESS'} 
                 Timestamp: ${new Date().format("yyyy-MM-dd HH:mm:ss Z")}
 
                 JUnit Console Output: See archived artifact '${REPORT_DIR}/junit-console-output.txt'
                 JUnit XML Reports: See archived artifacts matching '${REPORT_DIR}/TEST-*.xml'
                 """
-                writeFile file: env.BUILD_SUMMARY_FILE, text: summary
-                archiveArtifacts artifacts: env.BUILD_SUMMARY_FILE, allowEmptyArchive: true
+                // This line creates the TXT file:
+                writeFile file: env.BUILD_SUMMARY_FILE, text: summary 
+                // This line archives it:
+                archiveArtifacts artifacts: env.BUILD_SUMMARY_FILE, allowEmptyArchive: true 
             }
             echo "[*] Pipeline finished. Final status: ${currentBuild.currentResult}"
         }
-
-        success { 
-            echo "[***] PIPELINE SUCCEEDED [***]"
-            script {
-                // Assumes Email Extension Plugin is installed.
-                try {
-                    emailext (
-                        subject: "SUCCESS: Jenkins Build #${env.BUILD_NUMBER} for ${env.JOB_NAME}",
-                        body: """<p>Build SUCCEEDED for project <b>${env.JOB_NAME}</b>, build number <b>#${env.BUILD_NUMBER}</b>.</p>
-                               <p>Access the build at: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-                               <p>Build summary and test reports are available as archived artifacts.</p>
-                               <p>Summary file: ${env.BUILD_SUMMARY_FILE}</p>""",
-                        to: 'ekdnlt714714@gmail.com', // <<< --- !!! CHANGE THIS EMAIL ADDRESS !!!
-                        mimeType: 'text/html'
-                    )
-                } catch (e) {
-                    echo "[w] Failed to send success email. Email Extension Plugin configured correctly? Error: ${e.getMessage()}"
-                }
-            }
-        }
-        
-        unstable { 
-            echo "[!!!] PIPELINE UNSTABLE (Likely Test Failures) [!!!]"
-            script {
-                try {
-                    emailext (
-                        subject: "UNSTABLE: Jenkins Build #${env.BUILD_NUMBER} for ${env.JOB_NAME} (Test Failures?)",
-                        body: """<p>Build is UNSTABLE for project <b>${env.JOB_NAME}</b>, build number <b>#${env.BUILD_NUMBER}</b>. This often indicates test failures.</p>
-                               <p>Please review the test results: <a href="${env.BUILD_URL}testReport">${env.BUILD_URL}testReport</a></p>
-                               <p>Full build log: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-                               <p>Summary file: ${env.BUILD_SUMMARY_FILE}</p>""",
-                        to: 'ekdnlt714714@gmail.com', // <<< --- !!! CHANGE THIS EMAIL ADDRESS !!!
-                        mimeType: 'text/html'
-                    )
-                } catch (e) {
-                    echo "[w] Failed to send unstable build email. Email Extension Plugin configured correctly? Error: ${e.getMessage()}"
-                }
-            }
-        }
-
-        failure { 
-            echo "[!!!] PIPELINE FAILED [!!!]"
-            script {
-                try {
-                    emailext (
-                        subject: "FAILURE: Jenkins Build #${env.BUILD_NUMBER} for ${env.JOB_NAME}",
-                        body: """<p>Build FAILED for project <b>${env.JOB_NAME}</b>, build number <b>#${env.BUILD_NUMBER}</b>.</p>
-                               <p>Please check the console output immediately for failure reasons: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-                               <p>Summary file (if generated before failure): ${env.BUILD_SUMMARY_FILE}</p>""",
-                        to: 'ekdnlt714714@gmail.com', // <<< --- !!! CHANGE THIS EMAIL ADDRESS !!!
-                        mimeType: 'text/html'
-                    )
-                } catch (e) {
-                    echo "[w] Failed to send failure email. Email Extension Plugin configured correctly? Error: ${e.getMessage()}"
-                }
-            }
->>>>>>> branch 'master' of https://github.com/ekdnlt714714/swenginnering.git
-        }
+        // ... success, unstable, failure blocks ...
     }
+    
+    
 }
