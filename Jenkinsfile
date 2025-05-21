@@ -155,7 +155,7 @@ pipeline {
                                <p>Access the build at: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
                                <p>Build summary and test reports are available as archived artifacts.</p>
                                <p>Summary file: ${env.BUILD_SUMMARY_FILE}</p>""",
-                        to: 'ekdnlt714714@gmail.com, cba7215@g.hongik.ac.kr,  leek0729@naver.com', // <<< --- !!! CHANGE THIS EMAIL ADDRESS !!!
+                        to: 'ekdnlt714714@gmail.com', // <<< --- !!! CHANGE THIS EMAIL ADDRESS !!!
                         mimeType: 'text/html'
                     )
                 } catch (e) {
@@ -174,7 +174,7 @@ pipeline {
                                <p>Please review the test results: <a href="${env.BUILD_URL}testReport">${env.BUILD_URL}testReport</a></p>
                                <p>Full build log: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
                                <p>Summary file: ${env.BUILD_SUMMARY_FILE}</p>""",
-                        to: 'ekdnlt714714@gmail.com, cba7215@g.hongik.ac.kr, leek0729@naver.com', // <<< --- !!! CHANGE THIS EMAIL ADDRESS !!!
+                        to: 'ekdnlt714714@gmail.com', // <<< --- !!! CHANGE THIS EMAIL ADDRESS !!!
                         mimeType: 'text/html'
                     )
                 } catch (e) {
@@ -192,7 +192,7 @@ pipeline {
                         body: """<p>Build FAILED for project <b>${env.JOB_NAME}</b>, build number <b>#${env.BUILD_NUMBER}</b>.</p>
                                <p>Please check the console output immediately for failure reasons: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
                                <p>Summary file (if generated before failure): ${env.BUILD_SUMMARY_FILE}</p>""",
-                        to: 'ekdnlt714714@gmail.com, cba7215@g.hongik.ac.kr, leek0729@naver.com', // <<< --- !!! CHANGE THIS EMAIL ADDRESS !!!
+                        to: 'ekdnlt714714@gmail.com', // <<< --- !!! CHANGE THIS EMAIL ADDRESS !!!
                         mimeType: 'text/html'
                     )
                 } catch (e) {
