@@ -150,7 +150,7 @@ pipeline {
                     emailext (
                     subject: "Pipeline Test - SUCCESS: Jenkins Build #${env.BUILD_NUMBER} for ${env.JOB_NAME}",
                     body: "This is a simple test email from the Jenkins pipeline. Build was successful.",
-                    to: 'ekdnlt714714@gmail.com', // Test with just ONE address first
+                    to: 'ekdnlt714714@naver.com', // Test with just ONE address first
                     mimeType: 'text/plain' // Send as plain text
                 )
                     echo "[i] Attempted to send simplified success email."
