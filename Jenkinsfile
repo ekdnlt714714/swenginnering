@@ -133,7 +133,7 @@ pipeline {
         always {
             echo "[*] Archiving test reports and build summary..."
             // JUnit plugin processes XML reports and sets build status (SUCCESS, UNSTABLE for test failures, FAILURE)
-            junit pattern: "${REPORT_DIR}/TEST-*.xml", // Pattern for JUnit XML reports
+            junit testResults: "${REPORT_DIR}/TEST-*.xml", // Pattern for JUnit XML reports
                    allowEmptyResults: true,          // Don't fail if no XML reports are found (e.g., compilation error before tests)
                    healthScaleFactor: 1.0            // Test health reporting scale
 
