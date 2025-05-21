@@ -1,78 +1,3 @@
-<<<<<<< HEAD
-pipeline {
-    agent any
-
-    environment {
-        JUNIT_JAR_URL = 'https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.7.1/junit-platform-console-standalone-1.7.1.jar'
-        JUNIT_JAR_PATH = 'lib/junit.jar'
-        CLASS_DIR = 'classes'
-        REPORT_DIR = 'test-reports'
-    }
-
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
-        stage('Prepare') {
-            steps {
-                sh '''
-                    mkdir -p ${CLASS_DIR}
-                    mkdir -p ${REPORT_DIR}
-                    mkdir -p lib
-                    echo "[+] Downloading JUnit JAR..."
-                    curl -L -o ${JUNIT_JAR_PATH} ${JUNIT_JAR_URL}
-                '''
-            }
-        }
-
-        stage('Build') {
-            steps {
-                sh '''
-                    echo "[+] Compiling source files..."
-                    cd Test2
-                    find src -name "*.java" > sources.txt
-                    javac -encoding UTF-8 -d ../${CLASS_DIR} -cp ../${JUNIT_JAR_PATH} @sources.txt
-                '''
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh '''
-                    echo "[+] Running tests with JUnit..."
-                    java -jar ${JUNIT_JAR_PATH} \
-                         --class-path ${CLASS_DIR} \
-                         --scan-class-path \
-                         --details=tree \
-                         --details-theme=ascii \
-                         --reports-dir ${REPORT_DIR} \
-                         --config=junit.platform.output.capture.stdout=true \
-                         --config=junit.platform.reporting.open.xml.enabled=true \
-                         > ${REPORT_DIR}/test-output.txt
-                '''
-            }
-        }
-    }
-
-    post {
-        always {
-            echo "[*] Archiving test results..."
-            junit "${REPORT_DIR}/**/*.xml"
-            archiveArtifacts artifacts: "${REPORT_DIR}/**/*", allowEmptyArchive: true
-        }
-
-        failure {
-            echo "Build or test failed!"
-        }
-
-        success {
-            echo "Build and test succeeded!"
-=======
-// Jenkinsfile (Declarative Pipeline)
-
 pipeline {
     agent any 
 
@@ -228,7 +153,7 @@ pipeline {
                                <p>Access the build at: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
                                <p>Build summary and test reports are available as archived artifacts.</p>
                                <p>Summary file: ${env.BUILD_SUMMARY_FILE}</p>""",
-                        to: 'ekdnlt714714@gmail.com', // <<< --- !!! CHANGE THIS EMAIL ADDRESS !!!
+                        to: 'ekdnlt714714@gmail.com, cba7215@g.hongik.ac.kr, songbaro@g.hongik.ac.kr, leek0729@naver.com', // <<< --- !!! CHANGE THIS EMAIL ADDRESS !!!
                         mimeType: 'text/html'
                     )
                 } catch (e) {
@@ -247,7 +172,7 @@ pipeline {
                                <p>Please review the test results: <a href="${env.BUILD_URL}testReport">${env.BUILD_URL}testReport</a></p>
                                <p>Full build log: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
                                <p>Summary file: ${env.BUILD_SUMMARY_FILE}</p>""",
-                        to: 'ekdnlt714714@gmail.com', // <<< --- !!! CHANGE THIS EMAIL ADDRESS !!!
+                        to: 'ekdnlt714714@gmail.com, cba7215@g.hongik.ac.kr, songbaro@g.hongik.ac.kr, leek0729@naver.com', // <<< --- !!! CHANGE THIS EMAIL ADDRESS !!!
                         mimeType: 'text/html'
                     )
                 } catch (e) {
@@ -265,14 +190,13 @@ pipeline {
                         body: """<p>Build FAILED for project <b>${env.JOB_NAME}</b>, build number <b>#${env.BUILD_NUMBER}</b>.</p>
                                <p>Please check the console output immediately for failure reasons: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
                                <p>Summary file (if generated before failure): ${env.BUILD_SUMMARY_FILE}</p>""",
-                        to: 'ekdnlt714714@gmail.com', // <<< --- !!! CHANGE THIS EMAIL ADDRESS !!!
+                        to: 'ekdnlt714714@gmail.com, cba7215@g.hongik.ac.kr, songbaro@g.hongik.ac.kr, leek0729@naver.com', // <<< --- !!! CHANGE THIS EMAIL ADDRESS !!!
                         mimeType: 'text/html'
                     )
                 } catch (e) {
                     echo "[w] Failed to send failure email. Email Extension Plugin configured correctly? Error: ${e.getMessage()}"
                 }
             }
->>>>>>> branch 'master' of https://github.com/ekdnlt714714/swenginnering.git
         }
     }
 }
