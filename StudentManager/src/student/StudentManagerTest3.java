@@ -18,5 +18,7 @@ class StudentManagerTest3 {
        assertThrows(IllegalArgumentException.class, () -> {
            studentManager.addStudent("의찬박");
        }, "예외 발생");
+       System.out.println("송재원: 2025/05/21/23:44");
+       //마스터 브랜치에서 작성
    }
 }
