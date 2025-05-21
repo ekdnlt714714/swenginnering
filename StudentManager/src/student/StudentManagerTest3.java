@@ -14,9 +14,8 @@ class StudentManagerTest3 {
    }
    @Test
    void testAddStudentDuplicate() {
-       studentManager.addStudent("의찬박");
-       assertThrows(IllegalArgumentException.class, () -> {
-           studentManager.addStudent("의찬박");
-       }, "예외 발생");
+       studentManager.addStudent("송재원");
+       assertThrows(IllegalArgumentException.class, () -> {studentManager.addStudent("송재원");}, "예외 발생");
+       System.out.println("송재원");
    }
 }
