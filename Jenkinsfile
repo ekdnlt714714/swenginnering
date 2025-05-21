@@ -110,15 +110,9 @@ pipeline {
             }
         }
     }
-
     post {
         always {
-            echo "[*] Archiving test reports and build summary..."
-            junit testResults: "${REPORT_DIR}/TEST-*.xml", 
-                   allowEmptyResults: true,          
-                   healthScaleFactor: 1.0            
-
-            archiveArtifacts artifacts: "${REPORT_DIR}/**/*", allowEmptyArchive: true
+            // ... other archiving ...
             
             script {
                 // Using env.GIT_COMMIT as a workaround for scm.GIT_COMMIT script security
@@ -130,66 +124,21 @@ pipeline {
                 Build Number: ${env.BUILD_NUMBER}
                 Build URL: ${env.BUILD_URL}
                 Git Commit: ${gitCommit}
-                Build Status: ${currentBuild.currentResult ?: 'IN PROGRESS'}
+                Build Status: ${currentBuild.currentResult ?: 'IN PROGRESS'} 
                 Timestamp: ${new Date().format("yyyy-MM-dd HH:mm:ss Z")}
 
                 JUnit Console Output: See archived artifact '${REPORT_DIR}/junit-console-output.txt'
                 JUnit XML Reports: See archived artifacts matching '${REPORT_DIR}/TEST-*.xml'
                 """
-                writeFile file: env.BUILD_SUMMARY_FILE, text: summary
-                archiveArtifacts artifacts: env.BUILD_SUMMARY_FILE, allowEmptyArchive: true
+                // This line creates the TXT file:
+                writeFile file: env.BUILD_SUMMARY_FILE, text: summary 
+                // This line archives it:
+                archiveArtifacts artifacts: env.BUILD_SUMMARY_FILE, allowEmptyArchive: true 
             }
             echo "[*] Pipeline finished. Final status: ${currentBuild.currentResult}"
         }
-
-        success { 
-            echo "[***] PIPELINE SUCCEEDED [***]"
-            script {
-                // Assumes Email Extension Plugin is installed.
-                try {
-                    emailext (
-                    subject: "Pipeline Test - SUCCESS: Jenkins Build",
-                    body: "This is a simple test email from the Jenkins pipeline. Build was successful.",
-                    to: 'ekdnlt714714@naver.com', // Test with just ONE address first
-                    mimeType: 'text/plain' // Send as plain text
-                )
-                    echo "Attempted to send simplified success email."
-                } catch (e) {
-                    echo "Failed to send simplified success email. Error: ${e.getMessage()}"
-                }
-            }
-        }
-        
-        unstable { 
-            echo "[!!!] PIPELINE UNSTABLE (Likely Test Failures) [!!!]"
-            script {
-                try {
-                    emailext (
-                        subject: "UNSTABLE: Jenkins Build",
-                        body: """<p>Build is UNSTABLE for project <b>${env.JOB_NAME}</b>, build number <b>#${env.BUILD_NUMBER}</b>.""",
-                        to: 'ekdnlt714714@gmail.com, cba7215@g.hongik.ac.kr, songbaro@g.hongik.ac.kr, leek0729@naver.com', // <<< --- !!! CHANGE THIS EMAIL ADDRESS !!!
-                        mimeType: 'text/html'
-                    )
-                } catch (e) {
-                    echo "[w] Failed to send unstable build email. Email Extension Plugin configured correctly? Error: ${e.getMessage()}"
-                }
-            }
-        }
-
-        failure { 
-            echo "[!!!] PIPELINE FAILED [!!!]"
-            script {
-                try {
-                    emailext (
-                        subject: "FAILURE: Jenkins Build",
-                        body: """<p>Build FAILED for project <b>${env.JOB_NAME}</b>, build number <b>#${env.BUILD_NUMBER}</b>.""",
-                        to: 'ekdnlt714714@gmail.com, cba7215@g.hongik.ac.kr, songbaro@g.hongik.ac.kr, leek0729@naver.com', // <<< --- !!! CHANGE THIS EMAIL ADDRESS !!!
-                        mimeType: 'text/html'
-                    )
-                } catch (e) {
-                    echo "[w] Failed to send failure email. Email Extension Plugin configured correctly? Error: ${e.getMessage()}"
-                }
-            }
-        }
+        // ... success, unstable, failure blocks ...
     }
+    
+    
 }
