@@ -21,5 +21,6 @@ class StudentManagerTest2 {
        
        System.out.println("이강유");
        System.out.println("emailTest");
+       System.out.println("branchTest");
    }
 }
