@@ -16,6 +16,6 @@ class StudentManagerTest3 {
    void testAddStudentDuplicate() {
        studentManager.addStudent("송재원");
        assertThrows(IllegalArgumentException.class, () -> {studentManager.addStudent("송재원");}, "예외 발생");
-       System.out.println("송재원");
+       System.out.println("송재원: 2025/05/28/13:53");
    }
 }
