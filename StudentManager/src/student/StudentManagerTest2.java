@@ -22,3 +22,4 @@ class StudentManagerTest2 {
        System.out.println("emailTest");
        System.out.println("branchTest");
    }
+}
