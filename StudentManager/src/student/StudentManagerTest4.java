@@ -15,9 +15,9 @@ class StudentManagerTest4 {
    @Test
    void testRemoveNonExistentStudent() {
        assertThrows(IllegalArgumentException.class, () -> {
-           studentManager.removeStudent("신경철");
+           studentManager.removeStudent("박박");
        }, "예외 발생");
-       System.out.println("신경철: 2025/05/28/16:04");
+       System.out.println("신경철: 2025/05/21/22:00");
        //신경철 브랜치에서 작성
    }
 
