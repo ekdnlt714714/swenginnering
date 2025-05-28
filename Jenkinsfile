@@ -1,3 +1,4 @@
+//작동하는 젠킨스 파일
 pipeline {
     agent any 
 
