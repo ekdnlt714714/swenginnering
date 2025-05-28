@@ -18,11 +18,6 @@ class StudentManagerTest2 {
        studentManager.addStudent("의찬");
        studentManager.removeStudent("의찬");
        assertFalse(studentManager.hasStudent("의찬"), "학생 제거");
-<<<<<<< HEAD
-       //
-=======
-
->>>>>>> branch 'ekdnlt714' of https://github.com/ekdnlt714714/swenginnering.git
        System.out.println("이강유");
        System.out.println("emailTest");
        System.out.println("branchTest");
