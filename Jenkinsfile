@@ -1,4 +1,3 @@
-//2025/05/28/15:24
 pipeline {
     agent any
 
@@ -8,11 +7,12 @@ pipeline {
         JUNIT_JAR_PATH = "lib/${JUNIT_JAR_FILENAME}" // Relative to workspace root
 
         // Source root now includes the 'StudentManager' project directory
-        PROJECT_DIR = 'StudentManager' // The directory containing your pom.xml or main source folder
+        PROJECT_DIR = 'StudentManager' // The directory containing your main source folder
         SRC_ROOT = "${PROJECT_DIR}/src"  // Path to the 'src' folder within your project
 
         CLASS_DIR = 'classes'       // Relative to workspace root for compiled files
         REPORT_DIR = 'test-reports' // Relative to workspace root for test reports
+        // BUILD_SUMMARY_FILE = "${REPORT_DIR}/build_summary.txt" // This wasn't used, can be removed or kept if planned for future use
     }
 
     stages {
@@ -30,7 +30,7 @@ pipeline {
                     mkdir -p ${REPORT_DIR}
                     mkdir -p lib
                     echo "[*] Downloading JUnit JAR..."
-                    # Added -L to follow redirects, which is safer for downloads
+                    # Fixed: Added -L to follow redirects for curl
                     curl -L -o ${JUNIT_JAR_PATH} ${JUNIT_JAR_URL}
                 """
             }
@@ -40,10 +40,9 @@ pipeline {
             steps {
                 sh """
                     echo "[*] Compiling source files..."
-                    # Corrected: Use SRC_ROOT to find Java files within your project structure
-                    # This assumes your .java files are somewhere under StudentManager/src/
+                    # Fixed: Use SRC_ROOT to find Java files, not 'sogong_project'
                     find ${SRC_ROOT} -name "*.java" > sources.txt
-                    echo "[*] Found Java files:"
+                    echo "[*] Found Java files to compile:"
                     cat sources.txt
                     echo "[*] Compiling with javac..."
                     javac -encoding UTF-8 -d ${CLASS_DIR} -cp ${JUNIT_JAR_PATH} @sources.txt
@@ -75,9 +74,6 @@ pipeline {
             echo "[*] Archiving test results..."
             junit allowEmptyResults: true, testResults: "${REPORT_DIR}/**/*.xml"
             archiveArtifacts artifacts: "${REPORT_DIR}/**/*", allowEmptyArchive: true
-
-            // Email notification - ensure Email Extension Plugin is configured in Jenkins
-            // The success email is moved to the success block for better clarity
         }
         failure {
             echo "[!] Build or test failed!"
