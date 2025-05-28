@@ -17,7 +17,7 @@ class StudentManagerTest1 {
    void testAddStudent() {
       studentManager.addStudent("박의찬");
       assertTrue(studentManager.hasStudent("박의찬"), "학생 추가");
-      System.out.println("박의찬: 2025/05/21/22:42");
+      System.out.println("박의찬: 2025/05/21/22:34");
 
    }
 }
